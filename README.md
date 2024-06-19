@@ -1,4 +1,4 @@
-# ![Mockup](./src/assets/wireframes/edit-user-name.png)
+# ![Logo](./src/assets/argentBankLogo.png)
 
 ### How to run
 
