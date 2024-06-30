@@ -3,7 +3,8 @@ import { createRoot } from 'react-dom/client'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 
 import Root from './Root.js'
-import Home from './pages/Home/index.js'
+import Home from './pages/Home'
+import Login from './pages/Login'
 
 import './styles/main.css'
 
@@ -15,6 +16,10 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <Home />,
+      },
+      {
+        path: '/login',
+        element: <Login />,
       },
       {
         path: '*',
