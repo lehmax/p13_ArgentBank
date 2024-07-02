@@ -2,7 +2,7 @@ const ENDPOINT = import.meta.env.VITE_API_ENDPOINT
 
 console.log('ENDPOINT', ENDPOINT)
 
-export const login = async (email: string, password: string) => {
+export const authenticateUser = async (email: string, password: string) => {
   const response = await fetch(`${ENDPOINT}/user/login`, {
     method: 'POST',
     headers: {

@@ -5,7 +5,9 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 
 import { store } from './store.js'
 
-import Root from './Root.js'
+import PrivateOutlet from './layout/PrivateOutlet.js'
+import Root from './layout/Root.js'
+import Error404 from './pages/Error404'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Profile from './pages/Profile'
@@ -26,12 +28,18 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
-        path: '/profile',
-        element: <Profile />,
+        path: '/',
+        element: <PrivateOutlet />,
+        children: [
+          {
+            path: '/profile',
+            element: <Profile />,
+          },
+        ],
       },
       {
         path: '*',
-        element: '',
+        element: <Error404 />,
       },
     ],
   },

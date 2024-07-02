@@ -1,9 +1,7 @@
-import { FormEvent, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
-import { login as loginAction } from '../../features/auth/userSlice'
-import { login } from '../../services/api'
-import { RootState } from '../../store'
+import { FormEvent } from 'react'
+
+import { Navigate } from 'react-router-dom'
+import { useAuth } from '../../hooks/useAuth'
 
 const Login = () => {
   return (
@@ -11,22 +9,14 @@ const Login = () => {
       <section className="sign-in-content">
         <i className="fa fa-user-circle sign-in-icon"></i>
         <h1>Sign In</h1>
-        <Form />
+        <LoginForm />
       </section>
     </main>
   )
 }
 
-const Form = () => {
-  const isLoggedIn = useSelector((state: RootState) => state.user.loggedIn)
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
-
-  useEffect(() => {
-    if (isLoggedIn) {
-      navigate('/profile')
-    }
-  }, [isLoggedIn])
+const LoginForm = () => {
+  const { login, isLoggedIn } = useAuth()
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -34,30 +24,17 @@ const Form = () => {
     const target = event.currentTarget
     const email = target.username.value
     const password = target.password.value
-    const rememberMe = target['remember-me'].checked
+    const persist = target['remember-me'].checked
 
-    const handleLogin = async () => {
-      try {
-        const response = await login(email, password)
-
-        if (response.status === 200) {
-          const { token } = response.body
-
-          dispatch(loginAction(token))
-
-          if (rememberMe) {
-            localStorage.setItem('sessionToken', token)
-          }
-        }
-      } catch (error) {
-        console.error(error)
-      }
-    }
-
-    handleLogin()
+    ;(async () => {
+      await login({ email, password, persist })
+      target.reset()
+    })()
   }
 
-  return (
+  return isLoggedIn ? (
+    <Navigate to="/profile" replace={true} />
+  ) : (
     <form onSubmit={onSubmit}>
       <div className="input-wrapper">
         <label htmlFor="username">Username</label>
