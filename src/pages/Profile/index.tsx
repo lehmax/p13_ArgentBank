@@ -49,49 +49,83 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
 }
 
 const UserName = () => {
-  const { currentUser } = useAuth()
+  const { currentUser, token } = useAuth()
+  const dispatch = useDispatch()
   const [isEditing, setIsEditing] = useState(false)
+
+  const { firstName, lastName } = currentUser || {}
+  const isName = firstName && lastName && !isEditing
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    console.log('submit')
+    const target = event.currentTarget
 
-    setIsEditing(false)
+    const firstName = target.firstName.value
+    const lastName = target.lastName.value
+
+    const save = async () => {
+      if (!token) return
+
+      try {
+        const request = await api().editProfile(token, { firstName, lastName })
+        console.log(request)
+
+        if (request.status === 200) {
+          console.log('Profile updated')
+
+          const response = await api().fetchProfile(token)
+          if (response.status === 200) {
+            dispatch(setUser(response.body))
+          }
+          setIsEditing(false)
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    save()
   }
 
   return (
     <>
       <h1>
         Welcome back
-        <br />
-        {!isEditing && currentUser?.firstName + ' ' + currentUser?.firstName}
+        {isName && (
+          <div>
+            {firstName} {lastName}
+          </div>
+        )}
       </h1>
       {isEditing ? (
-        <form onSubmit={onSubmit}>
-          <div>
-            <div>
-              <label htmlFor="firstName">First Name</label>
+        <form className="edit-name" onSubmit={onSubmit}>
+          <div className="fields">
+            <div className="input-wrapper">
+              <label htmlFor="firstName" className="sr-only">
+                First Name
+              </label>
               <input
                 id="firstName"
                 type="text"
                 placeholder={currentUser?.firstName}
               />
             </div>
-            <button type="submit" className="save-button">
+            <div className="input-wrapper">
+              <label className="sr-only" htmlFor="lastName">
+                Last Name
+              </label>
+              <input
+                id="lastName"
+                type="text"
+                placeholder={currentUser?.lastName}
+              />
+            </div>
+          </div>
+          <div className="buttons">
+            <button type="submit" className="edit-button">
               Save
             </button>
-          </div>
-          <div>
-            <label htmlFor="lastName">Last Name</label>
-            <input
-              id="lastName"
-              type="text"
-              placeholder={currentUser?.lastName}
-            />
-            <button
-              className="cancel-button"
-              onClick={() => setIsEditing(false)}
-            >
+            <button className="edit-button" onClick={() => setIsEditing(false)}>
               Cancel
             </button>
           </div>

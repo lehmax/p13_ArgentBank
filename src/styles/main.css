@@ -41,7 +41,8 @@ body {
   padding: 5px 20px;
 }
 
-.main-nav a {
+.main-nav a,
+.main-nav button {
   font-weight: bold;
   color: #2c3e50;
 }
@@ -53,6 +54,12 @@ body {
 .main-nav-item {
   text-decoration: none;
   margin-right: 0.5rem;
+  border: none;
+  background: none;
+}
+
+.main-nav-item i {
+  margin-right: 8px;
 }
 
 .main-nav-item:hover {
@@ -255,7 +262,22 @@ body {
   background-color: #00bc77;
   color: #fff;
   font-weight: bold;
+  border-radius: 4px;
   padding: 10px;
+}
+
+.edit-name .fields,
+.edit-name .buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.edit-name .buttons .edit-button {
+  box-sizing: border-box;
+  min-width: 120px;
+  color: #00bc77;
+  background-color: #fff;
 }
 
 .header {
@@ -273,6 +295,7 @@ body {
   border-color: #00bc77;
   background-color: #00bc77;
   color: #fff;
+  border-radius: 4px;
 }
 
 @media (width >= 720px) {

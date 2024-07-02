@@ -22,13 +22,21 @@ export const Nav = () => {
 }
 
 const AuthButton = () => {
-  const { isLoggedIn, logout } = useAuth()
+  const { isLoggedIn, logout, currentUser } = useAuth()
 
   return isLoggedIn ? (
-    <button onClick={logout} className="main-nav-item">
-      <i className="fa fa-user-circle"></i>
-      Sign out
-    </button>
+    <>
+      {currentUser?.firstName ? (
+        <NavLink to="/profile" className="main-nav-item">
+          <i className="fa fa-user-circle" />
+          {currentUser.firstName}
+        </NavLink>
+      ) : null}
+      <button onClick={logout} className="main-nav-item">
+        <i className="fa fa-sign-out"></i>
+        Sign out
+      </button>
+    </>
   ) : (
     <NavLink to="/login" className="main-nav-item">
       <i className="fa fa-user-circle"></i>
