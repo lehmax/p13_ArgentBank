@@ -1,4 +1,32 @@
+import { useEffect } from 'react'
+import { useDispatch } from 'react-redux'
+
+import { setUser } from '../../features/auth/authSlice'
+import { useAuth } from '../../hooks/useAuth'
+import { fetchProfile } from '../../services/api'
+
 const Profile = () => {
+  const { token } = useAuth()
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    if (!token) return
+
+    const getProfile = async () => {
+      try {
+        const response = await fetchProfile(token)
+
+        if (response.status === 200) {
+          dispatch(setUser(response.body))
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    getProfile()
+  }, [token])
+
   return (
     <main className="main bg-dark">
       <Name />
@@ -8,12 +36,13 @@ const Profile = () => {
 }
 
 const Name = () => {
+  const { currentUser } = useAuth()
   return (
     <div className="header">
       <h1>
         Welcome back
         <br />
-        Tony Jarvis!
+        {currentUser?.firstName} {currentUser?.lastName}
       </h1>
       <button className="edit-button">Edit Name</button>
     </div>

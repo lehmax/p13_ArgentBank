@@ -2,8 +2,20 @@ const ENDPOINT = import.meta.env.VITE_API_ENDPOINT
 
 console.log('ENDPOINT', ENDPOINT)
 
-export const authenticateUser = async (email: string, password: string) => {
-  const response = await fetch(`${ENDPOINT}/user/login`, {
+const request = async (input: RequestInfo, init?: RequestInit) => {
+  const response = await fetch(input, init)
+
+  if (!response.ok) {
+    const error = await response.json()
+
+    throw new Error(error.message)
+  }
+
+  return response.json()
+}
+
+export const authenticateUser = (email: string, password: string) => {
+  return request(`${ENDPOINT}/user/login`, {
     method: 'POST',
     headers: {
       accept: 'application/json',
@@ -14,12 +26,15 @@ export const authenticateUser = async (email: string, password: string) => {
       password: password,
     }),
   })
+}
 
-  if (!response.ok) {
-    const error = await response.json()
-
-    throw new Error(error.message)
-  }
-
-  return response.json()
+export const fetchProfile = (token: string) => {
+  return request(`${ENDPOINT}/user/profile`, {
+    method: 'POST',
+    headers: {
+      accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  })
 }

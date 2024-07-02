@@ -20,8 +20,8 @@ const LoginForm = () => {
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-
     const target = event.currentTarget
+
     const email = target.username.value
     const password = target.password.value
     const persist = target['remember-me'].checked

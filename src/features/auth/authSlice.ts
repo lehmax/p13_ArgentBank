@@ -11,6 +11,8 @@ interface User {
   email: string
   firstName: string
   lastName: string
+  createdAt: string
+  updatedAt: string
 }
 
 export interface AuthState {
@@ -34,9 +36,12 @@ const slice = createSlice({
       state.token = action.payload
     },
     setLoggedOut: () => initialState,
+    setUser: (state, action) => {
+      state.user = action.payload
+    },
   },
 })
 
-export const { setLoggedIn, setLoggedOut } = slice.actions
+export const { setLoggedIn, setLoggedOut, setUser } = slice.actions
 
 export default slice.reducer

@@ -11,7 +11,9 @@ interface loginPayload {
 }
 
 export const useAuth = () => {
-  const { loggedIn, user } = useSelector((state: RootState) => state.auth)
+  const { loggedIn, user, token } = useSelector(
+    (state: RootState) => state.auth
+  )
   const dispatch = useDispatch()
 
   const login = async (payload: loginPayload) => {
@@ -43,8 +45,9 @@ export const useAuth = () => {
   }
 
   return {
-    isLoggedIn: loggedIn,
     currentUser: user,
+    isLoggedIn: loggedIn,
+    token,
     logout,
     login,
   }
