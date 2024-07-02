@@ -6,7 +6,7 @@ const token = localStorage.getItem('sessionToken')
 
 const loggedIn = token ? true : false
 
-interface Person {
+export interface Person {
   firstName: string
   lastName: string
 }

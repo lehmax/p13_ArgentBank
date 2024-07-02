@@ -1,4 +1,4 @@
-import { Name } from '../features/auth/authSlice'
+import { Person } from '../features/auth/authSlice'
 
 export const api = () => {
   const ENDPOINT = import.meta.env.VITE_API_ENDPOINT
@@ -38,7 +38,7 @@ export const api = () => {
         },
       })
     },
-    editProfile: (token: string, data: Name) => {
+    editProfile: (token: string, data: Person) => {
       return request(`${ENDPOINT}/user/profile`, {
         method: 'PUT',
         headers: {
