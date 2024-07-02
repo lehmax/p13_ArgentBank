@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux'
 
-import { setLoggedIn, setLoggedOut } from '../features/auth/authSlice'
+import { setLoggedIn, setLoggedOut, setUser } from '../features/auth/authSlice'
 import { api } from '../services/api'
 import { RootState } from '../store'
 
@@ -44,11 +44,26 @@ export const useAuth = () => {
     }
   }
 
+  const setCurrentUser = async () => {
+    if (!token) return false
+
+    try {
+      const response = await api().fetchProfile(token)
+
+      if (response.status === 200) {
+        dispatch(setUser(response.body))
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   return {
     currentUser: user,
     isLoggedIn: loggedIn,
     token,
     logout,
     login,
+    setCurrentUser,
   }
 }

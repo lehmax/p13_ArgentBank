@@ -1,7 +1,5 @@
 import { FormEvent, useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux'
 
-import { setUser } from '../../features/auth/authSlice'
 import { useAuth } from '../../hooks/useAuth'
 import { api } from '../../services/api'
 
@@ -16,27 +14,11 @@ const Profile = () => {
 }
 
 const UserProvider = ({ children }: { children: React.ReactNode }) => {
-  const { token } = useAuth()
-
-  const dispatch = useDispatch()
+  const { setCurrentUser } = useAuth()
 
   useEffect(() => {
-    if (!token) return
-
-    const getProfile = async () => {
-      try {
-        const response = await api().fetchProfile(token)
-
-        if (response.status === 200) {
-          dispatch(setUser(response.body))
-        }
-      } catch (error) {
-        console.error(error)
-      }
-    }
-
-    getProfile()
-  }, [token])
+    setCurrentUser()
+  }, [])
 
   return (
     <>
@@ -49,8 +31,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
 }
 
 const UserName = () => {
-  const { currentUser, token } = useAuth()
-  const dispatch = useDispatch()
+  const { currentUser, token, setCurrentUser } = useAuth()
   const [isEditing, setIsEditing] = useState(false)
 
   const { firstName, lastName } = currentUser || {}
@@ -68,15 +49,9 @@ const UserName = () => {
 
       try {
         const request = await api().editProfile(token, { firstName, lastName })
-        console.log(request)
 
         if (request.status === 200) {
-          console.log('Profile updated')
-
-          const response = await api().fetchProfile(token)
-          if (response.status === 200) {
-            dispatch(setUser(response.body))
-          }
+          setCurrentUser()
           setIsEditing(false)
         }
       } catch (error) {

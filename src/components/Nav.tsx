@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 
 import Logo from '../assets/argentBankLogo.png'
 import { useAuth } from '../hooks/useAuth'
@@ -23,6 +23,12 @@ export const Nav = () => {
 
 const AuthButton = () => {
   const { isLoggedIn, logout, currentUser } = useAuth()
+  const navigate = useNavigate()
+
+  const onLogout = () => {
+    logout()
+    navigate('/login')
+  }
 
   return isLoggedIn ? (
     <>
@@ -32,7 +38,7 @@ const AuthButton = () => {
           {currentUser.firstName}
         </NavLink>
       ) : null}
-      <button onClick={logout} className="main-nav-item">
+      <button onClick={onLogout} className="main-nav-item">
         <i className="fa fa-sign-out"></i>
         Sign out
       </button>
