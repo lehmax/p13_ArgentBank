@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux'
 
 import { setLoggedIn, setLoggedOut } from '../features/auth/authSlice'
-import { authenticateUser } from '../services/api'
+import { api } from '../services/api'
 import { RootState } from '../store'
 
 interface loginPayload {
@@ -20,7 +20,7 @@ export const useAuth = () => {
     const { email, password, persist } = payload
 
     try {
-      const response = await authenticateUser(email, password)
+      const response = await api().authenticateUser(email, password)
 
       if (response.status === 200) {
         const { token } = response.body

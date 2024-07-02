@@ -1,40 +1,53 @@
-const ENDPOINT = import.meta.env.VITE_API_ENDPOINT
+import { Name } from '../features/auth/authSlice'
 
-console.log('ENDPOINT', ENDPOINT)
+export const api = () => {
+  const ENDPOINT = import.meta.env.VITE_API_ENDPOINT
+  const request = async (input: RequestInfo, init?: RequestInit) => {
+    const response = await fetch(input, init)
 
-const request = async (input: RequestInfo, init?: RequestInit) => {
-  const response = await fetch(input, init)
+    if (!response.ok) {
+      const error = await response.json()
 
-  if (!response.ok) {
-    const error = await response.json()
+      throw new Error(error.message)
+    }
 
-    throw new Error(error.message)
+    return response.json()
   }
 
-  return response.json()
-}
-
-export const authenticateUser = (email: string, password: string) => {
-  return request(`${ENDPOINT}/user/login`, {
-    method: 'POST',
-    headers: {
-      accept: 'application/json',
-      'Content-Type': 'application/json',
+  return {
+    authenticateUser: (email: string, password: string) => {
+      return request(`${ENDPOINT}/user/login`, {
+        method: 'POST',
+        headers: {
+          accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      })
     },
-    body: JSON.stringify({
-      email: email,
-      password: password,
-    }),
-  })
-}
-
-export const fetchProfile = (token: string) => {
-  return request(`${ENDPOINT}/user/profile`, {
-    method: 'POST',
-    headers: {
-      accept: 'application/json',
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+    fetchProfile: (token: string) => {
+      return request(`${ENDPOINT}/user/profile`, {
+        method: 'POST',
+        headers: {
+          accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      })
     },
-  })
+    editProfile: (token: string, data: Name) => {
+      return request(`${ENDPOINT}/user/profile`, {
+        method: 'PUT',
+        headers: {
+          accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(data),
+      })
+    },
+  }
 }

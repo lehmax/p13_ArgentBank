@@ -1,12 +1,23 @@
-import { useEffect } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 
 import { setUser } from '../../features/auth/authSlice'
 import { useAuth } from '../../hooks/useAuth'
-import { fetchProfile } from '../../services/api'
+import { api } from '../../services/api'
 
 const Profile = () => {
+  return (
+    <main className="main bg-dark">
+      <UserProvider>
+        <Accounts />
+      </UserProvider>
+    </main>
+  )
+}
+
+const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const { token } = useAuth()
+
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -14,7 +25,7 @@ const Profile = () => {
 
     const getProfile = async () => {
       try {
-        const response = await fetchProfile(token)
+        const response = await api().fetchProfile(token)
 
         if (response.status === 200) {
           dispatch(setUser(response.body))
@@ -28,24 +39,69 @@ const Profile = () => {
   }, [token])
 
   return (
-    <main className="main bg-dark">
-      <Name />
-      <Accounts />
-    </main>
+    <>
+      <div className="header">
+        <UserName />
+      </div>
+      {children}
+    </>
   )
 }
 
-const Name = () => {
+const UserName = () => {
   const { currentUser } = useAuth()
+  const [isEditing, setIsEditing] = useState(false)
+
+  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    console.log('submit')
+
+    setIsEditing(false)
+  }
+
   return (
-    <div className="header">
+    <>
       <h1>
         Welcome back
         <br />
-        {currentUser?.firstName} {currentUser?.lastName}
+        {!isEditing && currentUser?.firstName + ' ' + currentUser?.firstName}
       </h1>
-      <button className="edit-button">Edit Name</button>
-    </div>
+      {isEditing ? (
+        <form onSubmit={onSubmit}>
+          <div>
+            <div>
+              <label htmlFor="firstName">First Name</label>
+              <input
+                id="firstName"
+                type="text"
+                placeholder={currentUser?.firstName}
+              />
+            </div>
+            <button type="submit" className="save-button">
+              Save
+            </button>
+          </div>
+          <div>
+            <label htmlFor="lastName">Last Name</label>
+            <input
+              id="lastName"
+              type="text"
+              placeholder={currentUser?.lastName}
+            />
+            <button
+              className="cancel-button"
+              onClick={() => setIsEditing(false)}
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      ) : (
+        <button className="edit-button" onClick={() => setIsEditing(true)}>
+          Edit Name
+        </button>
+      )}
+    </>
   )
 }
 
