@@ -6,27 +6,11 @@ import { api } from '../../services/api'
 const Profile = () => {
   return (
     <main className="main bg-dark">
-      <UserProvider>
-        <Accounts />
-      </UserProvider>
+     <div className="header">
+      <UserName />
+     </div>
+     <Accounts />
     </main>
-  )
-}
-
-const UserProvider = ({ children }: { children: React.ReactNode }) => {
-  const { setCurrentUser } = useAuth()
-
-  useEffect(() => {
-    setCurrentUser()
-  }, [])
-
-  return (
-    <>
-      <div className="header">
-        <UserName />
-      </div>
-      {children}
-    </>
   )
 }
 
