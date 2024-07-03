@@ -30,6 +30,8 @@ export const useAuth = () => {
         if (persist) {
           localStorage.setItem('sessionToken', token)
         }
+
+        setCurrentUser()
       }
     } catch (error) {
       console.error(error)
