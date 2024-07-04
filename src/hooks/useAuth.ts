@@ -1,14 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux'
 
-import { setLoggedIn, setLoggedOut, setUser } from '../features/auth/authSlice'
-import { api } from '../services/api'
+import { STORAGE_KEY, setLoggedOut } from '../features/auth/authSlice'
 import { RootState } from '../store'
-
-interface loginPayload {
-  email: string
-  password: string
-  persist: boolean
-}
 
 export const useAuth = () => {
   const { loggedIn, user, token } = useSelector(
@@ -16,47 +9,11 @@ export const useAuth = () => {
   )
   const dispatch = useDispatch()
 
-  const login = async (payload: loginPayload) => {
-    const { email, password, persist } = payload
-
-    try {
-      const response = await api().authenticateUser(email, password)
-
-      if (response.status === 200) {
-        const { token } = response.body
-
-        dispatch(setLoggedIn(token))
-
-        if (persist) {
-          localStorage.setItem('sessionToken', token)
-        }
-
-        setCurrentUser()
-      }
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
   const logout = () => {
     dispatch(setLoggedOut())
 
-    if (localStorage.getItem('sessionToken') !== null) {
-      localStorage.removeItem('sessionToken')
-    }
-  }
-
-  const setCurrentUser = async () => {
-    if (!token) return false
-
-    try {
-      const response = await api().fetchProfile(token)
-
-      if (response.status === 200) {
-        dispatch(setUser(response.body))
-      }
-    } catch (error) {
-      console.error(error)
+    if (localStorage.getItem(STORAGE_KEY) !== null) {
+      localStorage.removeItem(STORAGE_KEY)
     }
   }
 
@@ -65,7 +22,5 @@ export const useAuth = () => {
     isLoggedIn: loggedIn,
     token,
     logout,
-    login,
-    setCurrentUser,
   }
 }

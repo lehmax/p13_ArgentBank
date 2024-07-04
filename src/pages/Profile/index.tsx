@@ -1,56 +1,48 @@
-import { FormEvent, useEffect, useState } from 'react'
+import { FormEvent, useState } from 'react'
 
+import { editCurrentUser } from '../../features/auth/authSlice'
+import { useAppDispatch } from '../../hooks'
 import { useAuth } from '../../hooks/useAuth'
-import { api } from '../../services/api'
 
 const Profile = () => {
   return (
     <main className="main bg-dark">
-     <div className="header">
-      <UserName />
-     </div>
-     <Accounts />
+      <div className="header">
+        <UserName />
+      </div>
+      <Accounts />
     </main>
   )
 }
 
 const UserName = () => {
-  const { currentUser, token, setCurrentUser } = useAuth()
+  const { currentUser } = useAuth()
   const [isEditing, setIsEditing] = useState(false)
+  const dispatch = useAppDispatch()
 
   const { firstName, lastName } = currentUser || {}
-  const isName = firstName && lastName && !isEditing
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const target = event.currentTarget
 
-    const firstName = target.firstName.value
-    const lastName = target.lastName.value
+    if (!target.firstName.value && !target.lastName.value) return
 
-    const save = async () => {
-      if (!token) return
+    const inputFirstName = target.firstName.value || firstName
+    const inputLastName = target.lastName.value || lastName
 
-      try {
-        const request = await api().editProfile(token, { firstName, lastName })
+    dispatch(
+      editCurrentUser({ firstName: inputFirstName, lastName: inputLastName })
+    )
 
-        if (request.status === 200) {
-          setCurrentUser()
-          setIsEditing(false)
-        }
-      } catch (error) {
-        console.error(error)
-      }
-    }
-
-    save()
+    setIsEditing(false)
   }
 
   return (
     <>
       <h1>
         Welcome back
-        {isName && (
+        {!isEditing && (
           <div>
             {firstName} {lastName}
           </div>
@@ -63,21 +55,13 @@ const UserName = () => {
               <label htmlFor="firstName" className="sr-only">
                 First Name
               </label>
-              <input
-                id="firstName"
-                type="text"
-                placeholder={currentUser?.firstName}
-              />
+              <input id="firstName" type="text" placeholder={firstName} />
             </div>
             <div className="input-wrapper">
               <label className="sr-only" htmlFor="lastName">
                 Last Name
               </label>
-              <input
-                id="lastName"
-                type="text"
-                placeholder={currentUser?.lastName}
-              />
+              <input id="lastName" type="text" placeholder={lastName} />
             </div>
           </div>
           <div className="buttons">

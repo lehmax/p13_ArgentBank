@@ -1,6 +1,8 @@
 import { FormEvent } from 'react'
 
 import { Navigate } from 'react-router-dom'
+import { authenticateUser } from '../../features/auth/authSlice'
+import { useAppDispatch } from '../../hooks'
 import { useAuth } from '../../hooks/useAuth'
 
 const Login = () => {
@@ -16,7 +18,8 @@ const Login = () => {
 }
 
 const LoginForm = () => {
-  const { login, isLoggedIn } = useAuth()
+  const { isLoggedIn } = useAuth()
+  const dispatch = useAppDispatch()
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -26,10 +29,7 @@ const LoginForm = () => {
     const password = target.password.value
     const persist = target['remember-me'].checked
 
-    ;(async () => {
-      await login({ email, password, persist })
-      target.reset()
-    })()
+    dispatch(authenticateUser({ email, password, persist }))
   }
 
   return isLoggedIn ? (
