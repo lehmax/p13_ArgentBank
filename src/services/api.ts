@@ -1,4 +1,4 @@
-import { Person } from '../features/auth/authSlice'
+import { Person } from '../features/auth/types'
 
 export const api = () => {
   const ENDPOINT = import.meta.env.VITE_API_ENDPOINT
