@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux'
 
-import { STORAGE_KEY, setLoggedOut } from '../features/auth/authSlice'
+import { setLoggedOut } from '../features/auth/authSlice'
+import * as session from '../services/session'
 import { RootState } from '../store'
 
 export const useAuth = () => {
@@ -12,8 +13,8 @@ export const useAuth = () => {
   const logout = () => {
     dispatch(setLoggedOut())
 
-    if (localStorage.getItem(STORAGE_KEY) !== null) {
-      localStorage.removeItem(STORAGE_KEY)
+    if (session.getToken() !== null) {
+      session.removeToken()
     }
   }
 

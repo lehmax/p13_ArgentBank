@@ -1,10 +1,9 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
 import { api } from '../../services/api'
+import * as session from '../../services/session'
 import { RootState } from '../../store'
 import { AuthState, Person, loginPayload } from './types'
-
-export const STORAGE_KEY = 'SESSION'
 
 const initialState: AuthState = {
   loggedIn: false,
@@ -14,7 +13,7 @@ const initialState: AuthState = {
 }
 
 const init = async () => {
-  const token = localStorage.getItem(STORAGE_KEY)
+  const token = session.getToken()
 
   if (!token) return initialState
 
@@ -48,7 +47,7 @@ export const authenticateUser = createAsyncThunk(
       thunk.dispatch(setCurrentUser(token))
 
       if (persist) {
-        localStorage.setItem(STORAGE_KEY, token)
+        session.persistToken(token)
       }
 
       return { token, persist }

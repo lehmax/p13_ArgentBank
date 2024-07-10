@@ -25,9 +25,11 @@ const LoginForm = () => {
     event.preventDefault()
     const target = event.currentTarget
 
-    const email = target.username.value
-    const password = target.password.value
+    const email = target.username.value.trim()
+    const password = target.password.value.trim()
     const persist = target['remember-me'].checked
+
+    if (!email || !password) return alert('Please fill in all fields')
 
     dispatch(authenticateUser({ email, password, persist }))
   }
