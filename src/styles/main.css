@@ -207,6 +207,22 @@ body,
 .input-wrapper input {
   padding: 5px;
   font-size: 1.2rem;
+  border-style: solid;
+}
+
+.submitted input:invalid {
+  border-color: red;
+}
+
+.submitted input:invalid:focus {
+  outline-color: red;
+}
+
+.validation-message,
+.error-message {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: red;
 }
 
 .footer {

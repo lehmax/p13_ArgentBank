@@ -3,13 +3,14 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { api } from '../../services/api'
 import * as session from '../../services/session'
 import { RootState } from '../../store'
-import { AuthState, Person, loginPayload } from './types'
+import { AuthState, loginPayload, Person } from './types'
 
 const initialState: AuthState = {
   loggedIn: false,
   token: null,
   user: null,
   persist: false,
+  error: null,
 }
 
 const init = async () => {
@@ -40,32 +41,24 @@ export const authenticateUser = createAsyncThunk(
   async (payload: loginPayload, thunk) => {
     const { email, password, persist } = payload
 
-    try {
-      const response = await api().authenticateUser(email, password)
-      const { token } = response.body
+    const response = await api().authenticateUser(email, password)
+    const { token } = response.body
 
-      thunk.dispatch(setCurrentUser(token))
+    thunk.dispatch(setCurrentUser(token))
 
-      if (persist) {
-        session.persistToken(token)
-      }
-
-      return { token, persist }
-    } catch (error: any) {
-      return thunk.rejectWithValue(error?.response.message)
+    if (persist) {
+      session.persistToken(token)
     }
+
+    return { token, persist }
   }
 )
 
 export const setCurrentUser = createAsyncThunk(
   'auth/setCurrentUser',
-  async (token: string, thunk) => {
-    try {
-      const response = await api().fetchProfile(token)
-      return response.body
-    } catch (error: any) {
-      return thunk.rejectWithValue(error?.response.message)
-    }
+  async (token: string) => {
+    const response = await api().fetchProfile(token)
+    return response.body
   }
 )
 
@@ -77,12 +70,8 @@ export const editCurrentUser = createAsyncThunk(
 
     if (!token) return thunk.rejectWithValue('No token found')
 
-    try {
-      const response = await api().editProfile(token, payload)
-      return response.body
-    } catch (error: any) {
-      return thunk.rejectWithValue(error?.response.message)
-    }
+    const response = await api().editProfile(token, payload)
+    return response.body
   }
 )
 
@@ -98,6 +87,11 @@ const slice = createSlice({
       state.loggedIn = true
       state.token = token
       state.persist = persist
+    })
+    builder.addCase(authenticateUser.rejected, (state, action) => {
+      if (action.error.message) {
+        state.error = action.error.message
+      }
     })
     builder.addCase(setCurrentUser.fulfilled, (state, action) => {
       state.user = action.payload

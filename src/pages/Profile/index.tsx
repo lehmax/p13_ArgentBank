@@ -16,24 +16,29 @@ const Profile = () => {
 }
 
 const UserName = () => {
+  const dispatch = useAppDispatch()
   const { currentUser } = useAuth()
   const [isEditing, setIsEditing] = useState(false)
-  const dispatch = useAppDispatch()
 
   const { firstName, lastName } = currentUser || {}
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const target = event.currentTarget
+    const isEmptyFields = !target.firstName.value && !target.lastName.value
 
-    if (!target.firstName.value && !target.lastName.value) return
+    if (isEmptyFields) return
 
     const inputFirstName = target.firstName.value || firstName
     const inputLastName = target.lastName.value || lastName
+    const isSameName =
+      inputFirstName === firstName && inputLastName === lastName
 
-    dispatch(
-      editCurrentUser({ firstName: inputFirstName, lastName: inputLastName })
-    )
+    if (!isSameName) {
+      dispatch(
+        editCurrentUser({ firstName: inputFirstName, lastName: inputLastName })
+      )
+    }
 
     setIsEditing(false)
   }
@@ -55,13 +60,13 @@ const UserName = () => {
               <label htmlFor="firstName" className="sr-only">
                 First Name
               </label>
-              <input id="firstName" type="text" placeholder={firstName} />
+              <input id="firstName" type="text" defaultValue={firstName} />
             </div>
             <div className="input-wrapper">
               <label className="sr-only" htmlFor="lastName">
                 Last Name
               </label>
-              <input id="lastName" type="text" placeholder={lastName} />
+              <input id="lastName" type="text" defaultValue={lastName} />
             </div>
           </div>
           <div className="buttons">

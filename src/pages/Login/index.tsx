@@ -1,6 +1,7 @@
 import { FormEvent } from 'react'
 
 import { Navigate } from 'react-router-dom'
+import TextInput from '../../components/TextInput'
 import { authenticateUser } from '../../features/auth/authSlice'
 import { useAppDispatch } from '../../hooks'
 import { useAuth } from '../../hooks/useAuth'
@@ -18,34 +19,45 @@ const Login = () => {
 }
 
 const LoginForm = () => {
-  const { isLoggedIn } = useAuth()
+  const { isLoggedIn, error } = useAuth()
   const dispatch = useAppDispatch()
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const target = event.currentTarget
+    const form = event.currentTarget
 
-    const email = target.username.value.trim()
-    const password = target.password.value.trim()
-    const persist = target['remember-me'].checked
+    const isValid = form.checkValidity()
+    form.classList.add('submitted')
 
-    if (!email || !password) return alert('Please fill in all fields')
+    if (isValid) {
+      const email = form.username.value.trim()
+      const password = form.password.value.trim()
+      const persist = form['remember-me'].checked
 
-    dispatch(authenticateUser({ email, password, persist }))
+      dispatch(authenticateUser({ email, password, persist }))
+    }
   }
 
   return isLoggedIn ? (
     <Navigate to="/profile" replace={true} />
   ) : (
-    <form onSubmit={onSubmit}>
-      <div className="input-wrapper">
-        <label htmlFor="username">Username</label>
-        <input type="text" id="username" />
-      </div>
-      <div className="input-wrapper">
-        <label htmlFor="password">Password</label>
-        <input type="password" id="password" />
-      </div>
+    <form noValidate onSubmit={onSubmit}>
+      <TextInput
+        type="email"
+        id="username"
+        name="username"
+        label="Username (email)"
+        required
+      />
+      <TextInput
+        type="password"
+        id="password"
+        label="Password"
+        name="password"
+        required
+      />
+
+      {error && <div className="error-message">{error}</div>}
       <div className="input-remember">
         <input type="checkbox" id="remember-me" />
         <label htmlFor="remember-me">Remember me</label>

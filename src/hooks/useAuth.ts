@@ -5,7 +5,7 @@ import * as session from '../services/session'
 import { RootState } from '../store'
 
 export const useAuth = () => {
-  const { loggedIn, user, token } = useSelector(
+  const { loggedIn, user, token, error } = useSelector(
     (state: RootState) => state.auth
   )
   const dispatch = useDispatch()
@@ -23,5 +23,6 @@ export const useAuth = () => {
     isLoggedIn: loggedIn,
     token,
     logout,
+    error,
   }
 }
