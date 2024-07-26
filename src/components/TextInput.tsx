@@ -27,17 +27,8 @@ const TextInput = ({ className, label, errorText, id, ...props }: Props) => {
 
   return (
     <div className="input-wrapper">
-      <div>
-        {label && (
-          <div>
-            <label htmlFor={id}>{label}</label>
-          </div>
-        )}
-      </div>
-      <div className="relative">
-        <input id={id} onInvalid={onInvalid} onBlur={onBlur} {...props} />
-      </div>
-
+      {label && <label htmlFor={id}>{label}</label>}
+      <input id={id} onInvalid={onInvalid} onBlur={onBlur} {...props} />
       {!!validationMessage && (
         <div className="validation-message">
           {errorText || validationMessage}
